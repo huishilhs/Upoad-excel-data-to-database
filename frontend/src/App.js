@@ -72,22 +72,22 @@ function App() {
       const worksheetName = workbook.SheetNames[0];
       const worksheet = workbook.Sheets[worksheetName];
       const data = XLSX.utils.sheet_to_json(worksheet);
-
-        axios
-          .post(`http://localhost:8081/upload/excel`, data)
-          .then((response) => {
-            tempAlertSuccess("Upload successful!", 10000);
-          })
-          .catch((error) => {
-            console.log(error);
-            tempAlert("Upload unsuccessful, please try again", 5000);
-          });
+      axios
+        .post(`http://localhost:8081/upload/excel`, data)
+        .then((response) => {
+          tempAlertSuccess("Upload successful!", 10000);
+        })
+        .catch((error) => {
+          console.log(error);
+          tempAlert("Upload unsuccessful, please try again", 5000);
+        });
 
       setExcelData(data);
     } else {
       setExcelData(null);
     }
   };
+
   return (
     <div className="container">
       {/* upload file section */}
@@ -146,9 +146,10 @@ function App() {
             <table className="table">
               <thead>
                 <tr>
+                  <th scope="col">Name of Opportunity</th>
                   <th scope="col">Tender No.</th>
-                  <th scope="col">H_PS Account Level</th>
-                  <th scope="col">Parent Agency</th>
+                  <th scope="col">H&amp;PS Account Level</th>
+                  <th scope="col">Parent Agency &#40;Ministry Level&#41;</th>
                   <th scope="col">Agency</th>
                   <th scope="col">Published Date</th>
                   <th scope="col">Planned Close Date</th>
