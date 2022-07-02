@@ -71,7 +71,7 @@ function App() {
       const workbook = XLSX.read(excelFile, { type: "buffer" });
       const worksheetName = workbook.SheetNames[0];
       const worksheet = workbook.Sheets[worksheetName];
-      const data = XLSX.utils.sheet_to_json(worksheet);
+      const data = XLSX.utils.sheet_to_json(worksheet, { raw: false });
       axios
         .post(`http://localhost:8081/upload/excel`, data)
         .then((response) => {

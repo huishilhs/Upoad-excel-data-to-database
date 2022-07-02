@@ -8,14 +8,13 @@ const Scanning = {
         console.log(err);
         return callback(err, null);
       }
-      console.log();
-      const ScanningAgencyQuery = `select * from agencies where agency_name LIKE '%${request[0]["Agency"]}%'`;
+      const ScanningAgencyQuery = `select * from agencies where agency_name LIKE '%${request["Agency"]}%'`;
       dbConn.query(ScanningAgencyQuery, (error, results) => {
         dbConn.end();
         if (error) {
+          console.log(error);
           return callback(error, null);
         }
-
         return callback(null, results);
       });
     });

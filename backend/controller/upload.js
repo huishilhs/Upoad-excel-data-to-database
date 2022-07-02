@@ -16,20 +16,34 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.post("/upload/excel", (req, res) => {
-  console.log(req.body);
-  Scanning.ScanningAgency(req.body, (error, results) => {
-    if (error) {
-      res.status(500).send();
-      return;
-    }
-    // res.status(200).send(results);
-    if (results.length === 0) {
-      console.log("Agency does not exist in database");
-    }
-    if (results[0].agency_id != NaN) {
-      console.log(results[0].agency_id);
-    }
-  });
+  // Function to add agencies
+  const agencyUpload = (body, i) => {
+    Scanning.ScanningAgency(body, (error, results) => {
+      // res.status(200).send(results);
+      if (error || results.length == 0) {
+        console.log("Agency does not exist in database");
+        // "Not found"
+        res.status(404).send();
+        return;
+      } else {
+        let agency_id = results[0].agency_id;
+        Upload.UploadAgency(body, agency_id, (error, results) => {
+          if (error) {
+            // "Not acceptable"
+            res.status(406).send();
+            return;
+          } // "Created"
+          res.status(201).send(results);
+        });
+      }
+    });
+  };
+
+  let body = req.body;
+  for (i = 0; i < body.length; i++) {
+    // console.log(body[i]);
+    agencyUpload(body[i]);
+  }
 });
 
 module.exports = app;
