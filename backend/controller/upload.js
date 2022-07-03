@@ -19,6 +19,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.post("/upload/excel", (req, res) => {
   let body = req.body[0];
+  let tender_no = body["Tender No."];
   // console.log(body);
 
   // Change time format
@@ -38,6 +39,7 @@ app.post("/upload/excel", (req, res) => {
   changeTime(body);
 
   // Change award price format
+  console.log(body);
   const changeAwardPrice = (body) => {
     let awardPrice = body["Award Price"].replace(/(\r\n|\n|\r)/gm, "");
     let awardPriceArray = body["Award Price"]
@@ -59,29 +61,28 @@ app.post("/upload/excel", (req, res) => {
       res.status(406).send();
       return;
     }
-    // created
-    res.status(201).send(results);
   });
 
-  // Scanning.ScanningAgency(body, (error, results) => {
-  //   // res.status(200).send(results);
-  //   if (error || results.length == 0) {
-  //     console.log("Agency does not exist in database");
-  //     // "Not found"
-  //     res.status(404).send();
-  //     return;
-  //   } else {
-  //     agency_id = results[0].agency_id;
-  //     Upload.UploadAgency(body, agency_id, (error, results) => {
-  //       if (error) {
-  //         // "Not acceptable"
-  //         res.status(406).send();
-  //         return;
-  //       }
-  //       res.status(201).send(results);
-  //     });
-  //   }
-  // });
+  // Scan for agency_id and add into opportunities table
+  Scanning.ScanningAgency(body, (error, results) => {
+    if (error || results.length == 0) {
+      console.log("Agency does not exist in database");
+      // "Not found"
+      res.status(404).send();
+      return;
+    } else {
+      let agency_id = results[0].agency_id;
+      console.log(agency_id);
+      Upload.UploadAgency(tender_no, agency_id, (error, results) => {
+        if (error) {
+          // "Not acceptable"
+          res.status(406).send();
+          return;
+        }
+        res.status(201).send(results);
+      });
+    }
+  });
 });
 
 module.exports = app;

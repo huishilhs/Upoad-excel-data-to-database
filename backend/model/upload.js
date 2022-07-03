@@ -2,16 +2,15 @@ var db = require("../config/database");
 var moment = require("moment");
 
 const Upload = {
-  UploadAgency: (request, agency_id, callback) => {
+  UploadAgency: (tender_no, agency_id, callback) => {
     var dbConn = db.getConnection();
     dbConn.connect((err) => {
       if (err) {
         console.log(err);
         return callback(err, null);
       }
-      const UploadAgencyQuery = `INSERT INTO opportunities (opportunity_name, tender_no, agency_id, Published_date, planned_closed_date, extended_closed_date) 
-      VALUES ('${request["Name of Opportunity"]}','${request["Tender No."]}','${agency_id}','${request["Published Date"]}' ,'${request["Planned Close Date"]}','${request["Extended Close Date"]}')
-      ;`;
+      //UPDATE `gebiz`.`opportunities` SET `agency_id` = '69' WHERE (`opportunity_id` = '130');
+      const UploadAgencyQuery = `update opportunities set agency_id = ${agency_id} where (tender_no = '${tender_no}')`;
       dbConn.query(UploadAgencyQuery, (error, results) => {
         dbConn.end();
         if (error) {
