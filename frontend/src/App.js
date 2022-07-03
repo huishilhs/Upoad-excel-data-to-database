@@ -1,6 +1,7 @@
 import "bootstrap/dist/css/bootstrap.css";
 import "./App.css";
 import { Data } from "./Data";
+import { DataHeader } from "./DataHeader";
 import { useState } from "react";
 import axios from "axios";
 import * as XLSX from "xlsx";
@@ -146,14 +147,7 @@ function App() {
             <table className="table">
               <thead>
                 <tr>
-                  <th scope="col">Name of Opportunity</th>
-                  <th scope="col">Tender No.</th>
-                  <th scope="col">H&amp;PS Account Level</th>
-                  <th scope="col">Parent Agency &#40;Ministry Level&#41;</th>
-                  <th scope="col">Agency</th>
-                  <th scope="col">Published Date</th>
-                  <th scope="col">Planned Close Date</th>
-                  <th scope="col">Extended Close Date</th>
+                  <DataHeader excelData={excelData[0]} />
                 </tr>
               </thead>
               <tbody>
