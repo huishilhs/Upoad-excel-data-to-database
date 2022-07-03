@@ -1,0 +1,37 @@
+module.exports.getAwardedOpportunitiesFromRSSFeed2 = async function () {
+  return new Promise(async function (resolve, reject) {
+    try {
+      const opportunityList = [];
+      const browser = await Puppeteer.launch({ headless: true });
+      const page = await browser.newPage();
+      // Create and navigate new page
+      console.log("Open target page");
+      //await page.goto(`https://www.gebiz.gov.sg/rss/IT_Services_&_Software_Development-CREATE_AWD_FEED.xml`);
+      //await page.goto(`https://www.gebiz.gov.sg/rss/Softwares_&_Licences-CREATE_AWD_FEED.xml`);
+      // Transportation - Ticketing, Travel Services, Tours & Excursions
+      //https://www.gebiz.gov.sg/rss/Ticketing,_Travel_Services,_Tours__&_Excursions-CREATE_AWD_FEED.xml
+      await page.goto(
+        `https://www.gebiz.gov.sg/rss/Telecommunication_Devices-CREATE_AWD_FEED.xml`
+      );
+      const urlList = await page.$$eval("a", (nodes) =>
+        nodes.map((node) => ({
+          opportunityURL: node.href,
+        }))
+      );
+
+      // Close browser
+      await browser.close();
+      for (let i = 0; i < urlList.length; i++) {
+        //Reuse the opportunity variable to reference the details of each awarded opportunity
+        //created by , returned by getAwardedOpportunityDetails() function (method)
+        let opportunity = await getAwardedOpportunityDetails(
+          urlList[i].opportunityURL
+        );
+        opportunityList.push(opportunity);
+      }
+      resolve({ opportunityList: opportunityList });
+    } catch (error) {
+      reject(error);
+    }
+  }); //end of return new Promise
+}; //end of getAwardedOpportunitiesFromRSSFeed2()

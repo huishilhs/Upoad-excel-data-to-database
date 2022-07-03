@@ -38,8 +38,14 @@ app.post("/upload/excel", (req, res) => {
   };
   changeTime(body);
 
+  // Change offer validity duration format
+  const changeOfferDuration = (body) => {
+    let offerDuration = body["Offer Validity Duration (Days)"];
+    body["Offer Validity Duration (Days)"] = offerDuration.replace("Days", "");
+  };
+  changeOfferDuration(body);
+
   // Change award price format
-  console.log(body);
   const changeAwardPrice = (body) => {
     let awardPrice = body["Award Price"].replace(/(\r\n|\n|\r)/gm, "");
     let awardPriceArray = body["Award Price"]
@@ -55,15 +61,20 @@ app.post("/upload/excel", (req, res) => {
   changeAwardPrice(body);
 
   // Add opportunity_name, tender_no, dates and total_awarded_value into opportunities table
+  console.log(
+    "Inserting opportunity name, tender no, published, closed, extended, offer valid days, awarded date and total awarded value "
+  );
   Upload.UploadBasicInfo(body, (error, results) => {
     if (error) {
       // "Not acceptable"
       res.status(406).send();
       return;
     }
+    console.log("(1/) Basic upload success");
   });
 
   // Scan for agency_id and add into opportunities table
+  console.log("Retrieving agency_id");
   Scanning.ScanningAgency(body, (error, results) => {
     if (error || results.length == 0) {
       console.log("Agency does not exist in database");
@@ -71,6 +82,7 @@ app.post("/upload/excel", (req, res) => {
       res.status(404).send();
       return;
     } else {
+      console.log("agency_id successfully retrieved");
       let agency_id = results[0].agency_id;
       console.log(agency_id);
       Upload.UploadAgency(tender_no, agency_id, (error, results) => {
@@ -79,6 +91,7 @@ app.post("/upload/excel", (req, res) => {
           res.status(406).send();
           return;
         }
+        console.log("(2/) agency_id upload success");
         res.status(201).send(results);
       });
     }

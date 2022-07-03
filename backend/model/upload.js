@@ -29,8 +29,8 @@ const Upload = {
         console.log(err);
         return callback(err, null);
       }
-      const UploadBasicInfoQuery = `INSERT INTO opportunities (opportunity_name, tender_no, Published_date, planned_closed_date, extended_closed_date, award_date, total_awarded_value) 
-      VALUES ('${request["Name of Opportunity"]}','${request["Tender No."]}','${request["Published Date"]}' ,'${request["Planned Close Date"]}','${request["Extended Close Date"]}','${request["Date of Award"]}','${request["Total awarded value"]}')
+      const UploadBasicInfoQuery = `INSERT INTO opportunities (opportunity_name, tender_no, Published_date, planned_closed_date, extended_closed_date, offer_valid_days, award_date, total_awarded_value) 
+      VALUES ('${request["Name of Opportunity"]}','${request["Tender No."]}','${request["Published Date"]}' ,'${request["Planned Close Date"]}','${request["Extended Close Date"]}', '${request["Offer Validity Duration (Days)"]}', '${request["Date of Award"]}','${request["Total awarded value"]}')
       ;`;
       dbConn.query(UploadBasicInfoQuery, (error, results) => {
         dbConn.end();
